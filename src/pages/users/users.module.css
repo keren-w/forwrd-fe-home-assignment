@@ -41,13 +41,17 @@
   padding: 20px 25px;
 }
 
-.userRow {
-  margin-block: 1px 6px;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .userRowInput {
   flex-basis: 22.5%;
+}
+
+/* _______________________________ */
+
+.userRow {
+  display: flex;
+  margin-block: 1px 6px;
+  flex-wrap: nowrap;
+  gap: 4px;
+  justify-content: space-between;
+  align-items: center;
 }

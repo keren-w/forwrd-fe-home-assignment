@@ -16,12 +16,23 @@ export const ContextProvider = ({ children }) => {
   console.log('usersData', usersData);
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      setUsersData(data);
-    }, 2000);
+    let t;
+    const savedData = window.localStorage.getItem('FWD_AI');
+    if (savedData) {
+      setUsersData(JSON.parse(savedData).usersData);
+    }
+
+    else {
+      t = setTimeout(() => {
+        setUsersData(data);
+        window.localStorage.setItem('FWD_AI', JSON.stringify({
+          usersData: data
+        }))
+      }, 2000);
+    }
 
     return () => {
-      clearTimeout(t);
+      t && clearTimeout(t);
     };
   }, []);
 

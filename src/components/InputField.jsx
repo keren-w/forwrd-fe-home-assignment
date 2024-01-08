@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { TextField } from '@mui/material';
 
@@ -8,7 +9,9 @@ const StyledTextField = styled(TextField)({
   borderRadius: '4px',
 });
 
-const InputField = ({ name, value, onChangehandler, error, disabled, placeholder }) => {
+const InputField = (props) => {
+
+  const { name, value, error, onChangehandler, disabled, placeholder } = props;
   return (
     <StyledTextField
       name={name}

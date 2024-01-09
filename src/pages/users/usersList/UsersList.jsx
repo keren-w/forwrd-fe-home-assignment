@@ -1,5 +1,5 @@
-import {useState, useEffect, useRef} from 'react';
-import { Button, Typography } from '@mui/material';
+import { useState, useRef } from 'react';
+import { Typography } from '@mui/material';
 import UserRow from '../userRow/UserRow';
 import AddButton from '../../../components/AddButton';
 import styles from '../users.module.css';

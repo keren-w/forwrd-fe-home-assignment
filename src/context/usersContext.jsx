@@ -8,10 +8,12 @@ import cloneDeep from 'lodash.clonedeep';
 // initial value
 const UsersContext = createContext({
   userList: [],
-  setUserList: () => {},
   usersData: {},
   dispatchUserActions: () => {},
   loading: false,
+  errorCount: 0,
+  emptyFieldsCount: 0,
+  disableActions: false,
 });
 
 export const actionTypes = {
@@ -91,14 +93,11 @@ const userDataReducer = (state, {type, metaData}) => {
 
 // value provider
 export const ContextProvider = ({ children }) => {
-  // const [userList, setUserList] = useState([]);
   const [users, dispatchUserActions] = useReducer(userDataReducer, {
     userList: [],
     usersData: {}
   });
   const [loading, setLoading] = useState(false);
-
-  // console.log('usersData', usersData);
 
   useEffect(() => {
     let t;
@@ -132,18 +131,20 @@ export const ContextProvider = ({ children }) => {
 
   const getUserErrors = (userData) => DISPLAYED_USER_FIELDS.reduce((acc, fieldName) => acc+!!userData[fieldName].errors?.length, 0);
   const getUserEmptyFields = (userData) => DISPLAYED_USER_FIELDS.reduce((acc, fieldName) => parseInt(acc+userData[fieldName].isEmpty), 0);
-  
+  const hasNewUsers = (userList, usersData) => userList.some(userId => usersData[userId].isNewUser);
   const contextValue = useMemo(() => {
     const {userList, usersData} = users;
     const errorCount = userList.reduce((acc, userId) => acc+getUserErrors(usersData[userId]), 0)
     const emptyFieldsCount = userList.reduce((acc, userId) => acc+getUserEmptyFields(usersData[userId]), 0)
+    const disableActions = hasNewUsers(userList, usersData) || errorCount>0 || emptyFieldsCount>0;
     return {
     loading,
     userList,
     usersData,
     dispatchUserActions,
     errorCount,
-    emptyFieldsCount
+    emptyFieldsCount,
+    disableActions
   }}, [loading, users]);
 
   return <UsersContext.Provider value={contextValue}>{children}</UsersContext.Provider>;

@@ -32,8 +32,8 @@ function UsersList() {
       </div>
       <div className={styles.usersListContent} ref={scrollContainer} onScroll={e => handleScroll(e, visibleRows)}>
         <div>{userList?.slice(0, visibleRows).map((userId, idx) => (
-          idx<visibleRows && <div key={userId} style={{display:'flex'}}>
-            {idx+1}
+          idx<visibleRows && <div key={userId} className={styles.rowWrapper}>
+            <span>{idx+1}</span>
             <UserRow key={userId} user={usersData[userId]} />
           </div>
         ))}</div>

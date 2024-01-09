@@ -11,6 +11,10 @@ const StyledAddButton = styled(Button)({
   '&:hover': {
     backgroundColor: '#2989e8',
   },
+  '&:disabled': {
+    backgroundColor: 'rgba(50, 112, 174, 0.5)',
+    color: 'rgba(255, 255, 255, 0.3)',
+  }
 });
 
 const AddButton = ({ disabled, handleClick }) => {

@@ -68,3 +68,34 @@ export const validateField = (fieldName, value) => {
         isEmpty: false
     };
   };
+
+export class User {
+    constructor(user) {
+        this.id = {
+            value: user?.id || '',
+        }
+        this.isNewUser = user?.isNewUser || true,
+        this.name = {
+            value: user?.name || '',
+            errors: [], 
+            isEmpty: false
+        }
+        this.country = {
+            value: user?.name || '',
+            errors: [], 
+            isEmpty: false
+        }
+        this.email = {
+            value: user?.name || '',
+            errors: [], 
+            isEmpty: false
+        }
+        this.phone = {
+            value: user?.name || '',
+            errors: [], 
+            isEmpty: false
+        }
+    }
+}
+
+export const DISPLAYED_USER_FIELDS = ['name', 'country', 'email', 'phone'];

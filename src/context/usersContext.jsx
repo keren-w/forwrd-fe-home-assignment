@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect, useMemo, useReducer } from 'react';
 import data from '../data/initialUsersData.json';
-import { validateField } from '../pages/users/users.utils';
+import { validateField, DISPLAYED_USER_FIELDS } from '../pages/users/users.utils';
+import { User } from '../pages/users/users.utils';
+import { v4 as uuidv4 } from 'uuid';
 
 // initial value
 const UsersContext = createContext({
@@ -12,34 +14,76 @@ const UsersContext = createContext({
 });
 
 export const actionTypes = {
-    UPDATE_FIELD: 'updateField',
-    LOAD_FIELDS: 'loadFields'
+    UPDATE_USER: 'updateUsers',
+    LOAD_USERS: 'loadUsers',
+    ADD_USER: 'addUser',
+    VALIDATE_USER_FIELDS: 'validateUserFields',
 };
 
 const userDataReducer = (state, {type, metaData}) => {
-  if (type === actionTypes.UPDATE_FIELD) {
+  if (type === actionTypes.UPDATE_USER) {
     const {userId, fieldName, value} = metaData;
     return {
       ...state,
-      [userId]: {
-        ...state[userId],
-        [fieldName]: {
-            value,
-          ...validateField(fieldName, value)
+      usersData: {
+        ...state.usersData,
+        [userId]: {
+          ...state.usersData[userId],
+          [fieldName]: {
+              value,
+            ...validateField(fieldName, value)
+          }
         }
       }
     }
   }
-  if (type === actionTypes.LOAD_FIELDS) {
-    return metaData.normalizedData;
+  if (type === actionTypes.VALIDATE_USER_FIELDS) {
+    const {userId} = metaData;
+    const userData = state.usersData[userId];
+    const updatedUserData = Object.keys(userData).reduce((acc,fieldName) => ({
+      ...acc,
+      [fieldName]: {
+        ...userData[fieldName],
+        ...validateField(fieldName, userData[fieldName].value)
+      }
+    }), {});
+    return {
+      ...state,
+      usersData: {
+        ...state.usersData,
+        [userId]: {
+          ...updatedUserData,
+          isNewUser: false
+        }
+      }
+    }
+  }
+  if (type === actionTypes.LOAD_USERS) {
+    return {
+      userList: metaData.userList,
+      usersData: metaData.normalizedData
+    };
+  }
+  if (type === actionTypes.ADD_USER) {
+    const newId = uuidv4();
+    return {
+      userList: [newId, ...state.userList],
+      usersData: {
+        ...state.usersData,
+      [newId]: new User({id: newId, isNewUser: true})
+      }
+    }
   }
   return state;
 };
 
 // value provider
 export const ContextProvider = ({ children }) => {
-  const [userList, setUserList] = useState([]);
-  const [usersData, dispatchUserActions] = useReducer(userDataReducer, {});
+  // const [userList, setUserList] = useState([]);
+  const [users, dispatchUserActions] = useReducer(userDataReducer, {
+    userList: [],
+    usersData: {}
+  });
   const [loading, setLoading] = useState(false);
 
   // console.log('usersData', usersData);
@@ -49,30 +93,20 @@ export const ContextProvider = ({ children }) => {
     const savedData = window.localStorage.getItem('FWD_AI');
     if (savedData) {
       const {userList, usersData} = JSON.parse(savedData);
-      // setUsersData(JSON.parse(savedData).usersData);
-      setUserList(userList);
-      dispatchUserActions({type: actionTypes.LOAD_FIELDS, metaData: {normalizedData: usersData}})
+      dispatchUserActions({type: actionTypes.LOAD_USERS, metaData: {normalizedData: usersData, userList}})
     }
 
     else {
       setLoading(true);
       t = setTimeout(() => {
-        const usersArray = data.map(user => user.id);
+        const userList = data.map(user => user.id);
         const normalizedData = data.reduce((acc, user) => ({
           ...acc,
-          [user.id]: Object.keys(user).reduce((acc, fieldName) => ({
-            ...acc,
-            [fieldName]: {
-              value: user[fieldName],
-              errors: [], 
-              isEmpty: false
-            }
-          }), {})
+          [user.id]: new User({...user, isNewUser: false})
         }), {});
-        setUserList(usersArray);
-        dispatchUserActions({type: actionTypes.LOAD_FIELDS, metaData: {normalizedData}})
+        dispatchUserActions({type: actionTypes.LOAD_USERS, metaData: {normalizedData, userList}})
         window.localStorage.setItem('FWD_AI', JSON.stringify({
-          userList: usersArray,
+          userList,
           usersData: normalizedData
         }))
         setLoading(false);
@@ -84,9 +118,11 @@ export const ContextProvider = ({ children }) => {
     };
   }, []);
 
-  const getUserErrors = (userData) => Object.keys(userData).reduce((acc, fieldName) => acc+!!userData[fieldName].errors?.length, 0);
-  const getUserEmptyFields = (userData) => Object.keys(userData).reduce((acc, fieldName) => parseInt(acc+userData[fieldName].isEmpty), 0);
+  const getUserErrors = (userData) => DISPLAYED_USER_FIELDS.reduce((acc, fieldName) => acc+!!userData[fieldName].errors?.length, 0);
+  const getUserEmptyFields = (userData) => DISPLAYED_USER_FIELDS.reduce((acc, fieldName) => parseInt(acc+userData[fieldName].isEmpty), 0);
+  
   const contextValue = useMemo(() => {
+    const {userList, usersData} = users;
     const errorCount = userList.reduce((acc, userId) => acc+getUserErrors(usersData[userId]), 0)
     const emptyFieldsCount = userList.reduce((acc, userId) => acc+getUserEmptyFields(usersData[userId]), 0)
     return {
@@ -96,7 +132,7 @@ export const ContextProvider = ({ children }) => {
     dispatchUserActions,
     errorCount,
     emptyFieldsCount
-  }}, [usersData, loading, userList]);
+  }}, [loading, users]);
 
   return <UsersContext.Provider value={contextValue}>{children}</UsersContext.Provider>;
 };

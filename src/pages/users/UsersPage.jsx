@@ -6,8 +6,8 @@ import {useUsersContext} from '../../context/usersContext'
 
 function UsersPage() {
 
-  const { loader, errorCount, emptyFieldsCount} = useUsersContext();
-  if (loader) {
+  const { loading, errorCount, emptyFieldsCount} = useUsersContext();
+  if (loading) {
     return <Loader/>
   };  
 
@@ -16,8 +16,10 @@ function UsersPage() {
       <div className={styles.pageContentContainer}>
         <UsersList />
         <div className={styles.rightButtonContainer}>
+        <div className={styles.counterContainer}>
         <div>Invalid Fields: {errorCount}</div>
         <div>Empty Fields: {emptyFieldsCount}</div>
+        </div>
           <PrimaryButton
             disabled={errorCount+emptyFieldsCount>0}
             // TODO: Implement onClick handler

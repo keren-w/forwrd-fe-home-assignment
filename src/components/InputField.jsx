@@ -11,12 +11,13 @@ const StyledTextField = styled(TextField)({
 
 const InputField = (props) => {
 
-  const { name, value, error, onChangehandler, disabled, placeholder } = props;
+  const { name, value, error, onChangehandler, onBlurHandler, disabled, placeholder } = props;
   return (
     <StyledTextField
       name={name}
       value={value}
       onChange={(e) => onChangehandler(e.target.name, e.target.value)}
+      onBlur={onBlurHandler}
       error={error}
       disabled={disabled}
       placeholder={placeholder}

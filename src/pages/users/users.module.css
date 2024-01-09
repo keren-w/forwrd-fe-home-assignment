@@ -14,10 +14,6 @@
   justify-content: space-between;
 }
 
-.rightButtonContainer {
-  margin-left: auto;
-}
-
 .usersList {
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -54,4 +50,17 @@
   gap: 4px;
   justify-content: space-between;
   align-items: center;
+}
+
+.rightButtonContainer {
+  margin: 8px 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  gap: 16px
+}
+
+.counterContainer {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
 }

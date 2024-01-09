@@ -6,13 +6,17 @@ const StyledButton = styled(Button)({
   textTransform: 'none',
   fontSize: 16,
   padding: '6px 12px',
-  border: '1px solid',
+  // border: '1px solid',
   backgroundColor: '#232d85',
   '&:hover': {
     backgroundColor: 'white',
     borderColor: 'black',
     color: 'black',
   },
+  '&:disabled': {
+    backgroundColor: 'rgba(50, 112, 174, 0.5)',
+    color: 'rgba(255, 255, 255, 0.5)',
+  }
 });
 
 const PrimaryButton = ({ children, disabled, handleClick }) => {

@@ -3,6 +3,7 @@ import data from '../data/initialUsersData.json';
 import { validateField, DISPLAYED_USER_FIELDS } from '../pages/users/users.utils';
 import { User } from '../pages/users/users.utils';
 import { v4 as uuidv4 } from 'uuid';
+import cloneDeep from 'lodash.clonedeep';
 
 // initial value
 const UsersContext = createContext({
@@ -18,6 +19,7 @@ export const actionTypes = {
     LOAD_USERS: 'loadUsers',
     ADD_USER: 'addUser',
     VALIDATE_USER_FIELDS: 'validateUserFields',
+    DELETE_USER: 'deleteUser',
 };
 
 const userDataReducer = (state, {type, metaData}) => {
@@ -34,6 +36,22 @@ const userDataReducer = (state, {type, metaData}) => {
             ...validateField(fieldName, value)
           }
         }
+      }
+    }
+  }
+  if (type === actionTypes.LOAD_USERS) {
+    return {
+      userList: metaData.userList,
+      usersData: metaData.normalizedData
+    };
+  }
+  if (type === actionTypes.ADD_USER) {
+    const newId = uuidv4();
+    return {
+      userList: [newId, ...state.userList],
+      usersData: {
+        ...state.usersData,
+      [newId]: new User({id: newId, isNewUser: true})
       }
     }
   }
@@ -58,20 +76,14 @@ const userDataReducer = (state, {type, metaData}) => {
       }
     }
   }
-  if (type === actionTypes.LOAD_USERS) {
+  if (type === actionTypes.DELETE_USER) {
+    const filteredUserList = state.userList.filter(userId => userId !== metaData.userId);
     return {
-      userList: metaData.userList,
-      usersData: metaData.normalizedData
-    };
-  }
-  if (type === actionTypes.ADD_USER) {
-    const newId = uuidv4();
-    return {
-      userList: [newId, ...state.userList],
-      usersData: {
-        ...state.usersData,
-      [newId]: new User({id: newId, isNewUser: true})
-      }
+      userList: filteredUserList,
+      usersData: filteredUserList.reduce((acc, userId) => ({
+        ...acc,
+        [userId]: cloneDeep(state.usersData[userId])
+      }), {})
     }
   }
   return state;

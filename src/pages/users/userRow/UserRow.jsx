@@ -1,5 +1,3 @@
-
-import {useState} from 'react';
 import InputField from '../../../components/InputField';
 import TrashIconButton from '../../../components/TrashIconButton';
 import styles from '../users.module.css';
@@ -10,7 +8,6 @@ import {DISPLAYED_USER_FIELDS} from '../users.utils';
 import countryOptions from '../../../data/countries.json';
 
 const UserRow = ({ user }) => {
-  const [isDisabled, setIsDisabled] = useState(false);
   const { dispatchUserActions } = useUsersContext();
   const {isNewUser} = user;
 
@@ -20,7 +17,6 @@ const UserRow = ({ user }) => {
         key={idx}
         name={fieldName} 
         value={user[fieldName].value}
-        disabled={isDisabled}
         onChangehandler={(fieldName, value) => dispatchUserActions({
           type: actionTypes.UPDATE_USER, 
           metaData: {
@@ -32,9 +28,8 @@ const UserRow = ({ user }) => {
         onBlurHandler={() => isNewUser && dispatchUserActions({type: actionTypes.VALIDATE_USER_FIELDS, metaData: {userId: user.id.value}})}
         error={user[fieldName].errors?.length>0 || user[fieldName].isEmpty}
         placeholder={`Please enter ${fieldName}`}
-      />)}      
-      {/* Render each user row inputs and trash icon at the end of each row */}
-      <TrashIconButton />
+      />)}
+      <TrashIconButton handleClick={() => dispatchUserActions({type: actionTypes.DELETE_USER, metaData: {userId: user.id.value}})}/>
     </div>
   );
 };

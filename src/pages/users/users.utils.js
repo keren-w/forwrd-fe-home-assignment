@@ -2,16 +2,16 @@
 export const validateField = (fieldName, value) => {
     if (fieldName === 'name') {
       return validateName(value);
-    ;}
+    }
     if (fieldName === 'email') {
       return validateEmail(value);
-    ;}
+    }
     if (fieldName === 'country') {
       return validateCountry(value);
-    ;}  
+    }  
     if (fieldName === 'phone') {
       return validatePhone(value);
-    ;}
+    }
   };
   
   const validateName = (value) => { 

@@ -81,17 +81,17 @@ export class User {
             isEmpty: false
         }
         this.country = {
-            value: user?.name || '',
+            value: user?.country || '',
             errors: [], 
             isEmpty: false
         }
         this.email = {
-            value: user?.name || '',
+            value: user?.email || '',
             errors: [], 
             isEmpty: false
         }
         this.phone = {
-            value: user?.name || '',
+            value: user?.phone || '',
             errors: [], 
             isEmpty: false
         }

@@ -15,10 +15,10 @@
 }
 
 .loaderWrapper {
-  height: calc(100vh - 80px);
   display: flex;
   justify-content: center;
   align-items: center;
+  height: calc(100vh - 150px);
   svg {
     stroke: #3270ae;
   }

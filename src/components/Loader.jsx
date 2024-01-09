@@ -1,7 +1,7 @@
 import React from "react";
-import { RotatingLines } from 'react-loader-spinner'
+import { RotatingLines } from 'react-loader-spinner';
 
-const Loader = () => <div>
+const Loader = () => <div className='loaderWrapper'>
     <RotatingLines 
      visible={true}
      height="96"

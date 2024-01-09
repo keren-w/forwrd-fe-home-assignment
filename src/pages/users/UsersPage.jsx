@@ -8,7 +8,7 @@ function UsersPage() {
 
   const { loading, errorCount, emptyFieldsCount, disableActions} = useUsersContext();
   if (loading) {
-    return <Loader/>
+    return <div className={styles.loaderWrapper}><Loader/></div>
   }
 
   return (
